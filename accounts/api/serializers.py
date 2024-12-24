@@ -11,16 +11,32 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'phone_number')
         read_only_fields = ('id',)
 
-class RegisterSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES, default='guest')
     
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'phone_number', 'role')
+        fields = ('email', 'username', 'password')
+        extra_kwargs = {
+            'email': {
+                'required': True,
+                'error_messages': {
+                    'unique': "A user with that email already exists."
+                }
+            }
+        }
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return value
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        user = User.objects.create_user(
+            email=validated_data['email'],
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
         return user
 
 class MFATokenSerializer(serializers.Serializer):

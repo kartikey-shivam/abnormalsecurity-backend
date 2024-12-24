@@ -3,9 +3,10 @@ from django.conf import settings
 from django.utils import timezone
 import uuid
 from cryptography.fernet import Fernet
+from datetime import timedelta
 
 class EncryptedFile(models.Model):
-    file = models.FileField(upload_to='encrypted_files/')
+    file = models.FileField(upload_to=lambda instance, filename: 'enc/{}.bin'.format(uuid.uuid4().hex[:8]))
     original_filename = models.CharField(max_length=255)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +28,13 @@ class FileShare(models.Model):
     permission = models.CharField(max_length=10, choices=PERMISSION_CHOICES, default='view')
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    expire_days = models.IntegerField(default=7)
     
     @property
     def is_expired(self):
         return timezone.now() > self.expires_at 
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(days=self.expire_days)
+        super().save(*args, **kwargs) 

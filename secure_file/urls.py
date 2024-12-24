@@ -26,9 +26,9 @@ router.register(r'auth', AuthViewSet, basename='auth')
 router.register(r'files', FileViewSet, basename='files')
 
 urlpatterns = [
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('accounts.urls')),
     path('', include('files.urls')),
-    path('api/', include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

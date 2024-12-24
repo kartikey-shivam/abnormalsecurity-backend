@@ -6,6 +6,10 @@ from datetime import timedelta
 from .models import EncryptedFile, FileShare
 from .utils import handle_uploaded_file, decrypt_file
 from .forms import FileUploadForm, FileShareForm
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 @login_required
 def upload_file(request):
@@ -17,6 +21,7 @@ def upload_file(request):
             return redirect('file_detail', pk=encrypted_file.pk)
     else:
         form = FileUploadForm()
+    print("success",form)
     return render(request, 'files/upload.html', {'form': form})
 
 @login_required
@@ -87,4 +92,14 @@ def shared_file_access(request, uuid):
     if request.method == 'POST' and share.permission == 'download':
         return download_file(request, share.file.pk)
         
-    return render(request, 'files/shared_file.html', {'share': share}) 
+    return render(request, 'files/shared_file.html', {'share': share})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def share_file(request, pk):
+    try:
+        file = EncryptedFile.objects.get(pk=pk, uploaded_by=request.user)
+        # Your sharing logic here
+        return Response({'message': 'File shared successfully'}, status=status.HTTP_200_OK)
+    except EncryptedFile.DoesNotExist:
+        return Response({'error': 'File not found'}, status=status.HTTP_404_NOT_FOUND) 

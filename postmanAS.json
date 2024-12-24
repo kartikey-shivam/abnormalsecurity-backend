@@ -1,0 +1,187 @@
+{
+    "info": {
+      "name": "Secure File Sharing API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Authentication",
+        "item": [
+          {
+            "name": "Register",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/auth/register/",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"SecurePass123!\",\n    \"phone_number\": \"+1234567890\",\n    \"role\": \"regular\"\n}"
+              }
+            }
+          },
+          {
+            "name": "Login",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/auth/login/",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"SecurePass123!\"\n}"
+              }
+            }
+          },
+          {
+            "name": "Verify MFA",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/auth/verify-mfa/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{temp_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"mfa_code\": \"123456\"\n}"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Files",
+        "item": [
+          {
+            "name": "Upload File",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/files/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "file",
+                    "type": "file",
+                    "src": "/path/to/test.pdf"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "List Files",
+            "request": {
+              "method": "GET",
+              "url": "http://localhost:8000/api/files/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                }
+              ]
+            }
+          },
+          {
+            "name": "Share File",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/files/{{file_id}}/share/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"shared_with\": \"another_user\",\n    \"permission\": \"view\",\n    \"expire_days\": 7\n}"
+              }
+            }
+          },
+          {
+            "name": "Download File",
+            "request": {
+              "method": "GET",
+              "url": "http://localhost:8000/api/files/{{file_id}}/download/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Admin",
+        "item": [
+          {
+            "name": "Change User Role",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:8000/api/auth/change-role/",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{admin_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"user_id\": 2,\n    \"role\": \"regular\"\n}"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "variable": [
+      {
+        "key": "temp_token",
+        "value": "your_temporary_token"
+      },
+      {
+        "key": "access_token",
+        "value": "your_access_token"
+      },
+      {
+        "key": "admin_token",
+        "value": "your_admin_token"
+      },
+      {
+        "key": "file_id",
+        "value": "1"
+      }
+    ]
+  }

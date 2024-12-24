@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
@@ -11,6 +12,13 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_mfa_enabled = models.BooleanField(default=False)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='regular')
+    email = models.EmailField(
+        'email address',
+        unique=True,
+        error_messages={
+            'unique': "A user with that email already exists.",
+        }
+    )
     
     def __str__(self):
         return self.email
@@ -26,3 +34,7 @@ class CustomUser(AbstractUser):
     @property
     def is_guest_role(self):
         return self.role == 'guest'
+    
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self._password = raw_password
