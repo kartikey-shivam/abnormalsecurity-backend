@@ -5,8 +5,12 @@ import uuid
 from cryptography.fernet import Fernet
 from datetime import timedelta
 
+def generate_encrypted_filename(instance, filename):
+    """Generate a unique filename for encrypted files"""
+    return 'enc/{}.bin'.format(uuid.uuid4().hex[:8])
+
 class EncryptedFile(models.Model):
-    file = models.FileField(upload_to=lambda instance, filename: 'enc/{}.bin'.format(uuid.uuid4().hex[:8]))
+    file = models.FileField(upload_to=generate_encrypted_filename)
     original_filename = models.CharField(max_length=255)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -18,18 +22,26 @@ class EncryptedFile(models.Model):
 class FileShare(models.Model):
     PERMISSION_CHOICES = [
         ('view', 'View Only'),
-        ('download', 'Download'),
+        ('download', 'Download Allowed')
     ]
     
     file = models.ForeignKey(EncryptedFile, on_delete=models.CASCADE)
-    shared_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shared_by')
-    shared_with = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shared_with', null=True, blank=True)
-    share_link = models.UUIDField(default=uuid.uuid4, unique=True)
+    shared_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shares_created')
+    shared_with = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shares_received', null=True, blank=True)
     permission = models.CharField(max_length=10, choices=PERMISSION_CHOICES, default='view')
-    expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
-    expire_days = models.IntegerField(default=7)
-    
+    expires_at = models.DateTimeField()
+    is_public = models.BooleanField(default=False)
+    share_link = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    class Meta:
+        unique_together = ['file', 'shared_with']
+
+    def __str__(self):
+        if self.is_public:
+            return "Public share of {}".format(self.file.original_filename)
+        return "Share of {} with {}".format(self.file.original_filename, self.shared_with)
+
     @property
     def is_expired(self):
         return timezone.now() > self.expires_at 
