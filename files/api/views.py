@@ -17,6 +17,7 @@ from ..permissions import IsAdminRole, IsRegularRole, IsGuestRole
 from ..validators import validate_file_type
 from ..encryption import AESCipher
 from .serializers import EncryptedFileSerializer, FileShareSerializer
+from .permissions import CanUploadFile
 
 User = get_user_model()
 
@@ -24,6 +25,7 @@ class FileViewSet(viewsets.ModelViewSet):
     serializer_class = EncryptedFileSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
     queryset = EncryptedFile.objects.all()
+    permission_classes = [permissions.IsAuthenticated, CanUploadFile]
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'share', 'destroy']:
