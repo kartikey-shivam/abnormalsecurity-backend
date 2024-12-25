@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block content %}
+<h2>My Files</h2>
+<a href="{% url 'upload_file' %}" class="btn btn-primary">Upload New File</a>
+
+<h3>My Uploads</h3>
+<ul>
+  {% for file in user_files %}
+  <li>
+    <a href="{% url 'file_detail' file.pk %}">{{ file.original_filename }}</a>
+    <span>Uploaded: {{ file.uploaded_at }}</span>
+  </li>
+  {% endfor %}
+</ul>
+
+<h3>Shared With Me</h3>
+<ul>
+  {% for share in shared_files %}
+  <li>
+    <a href="{% url 'file_detail' share.file.pk %}"
+      >{{ share.file.original_filename }}</a
+    >
+    <span>Shared by: {{ share.shared_by }}</span>
+    <span>Expires: {{ share.expires_at }}</span>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
