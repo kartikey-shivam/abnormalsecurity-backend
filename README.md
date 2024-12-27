@@ -44,11 +44,7 @@ A secure file sharing system built with Django REST Framework that supports Mult
    - Secure file transmission
    - Access logging
 
-## API Endpoints
 
-### Authentication
-
-#### User Authentication
 
 
 ## Security Considerations
@@ -79,3 +75,11 @@ A secure file sharing system built with Django REST Framework that supports Mult
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+## License
+
+MIT License - see LICENSE file
+
+## Authors
+
+- Frontend: [abnormalsecurity-frontend]([https://github.com/kartikey-shivam/abnormalsecurity-frontend](https://github.com/kartikey-shivam/abnormalsecurity-frontend))
+
