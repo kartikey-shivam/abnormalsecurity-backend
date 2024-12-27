@@ -1,0 +1,281 @@
+{
+  "info": {
+    "name": "File Management API",
+    "description": "API collection for file upload, sharing and management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Upload File",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/your/file.pdf"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/files/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files"]
+        },
+        "description": "Upload an encrypted file"
+      }
+    },
+    {
+      "name": "Delete File",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/{{file_id}}/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "{{file_id}}"]
+        },
+        "description": "Delete a file (only file owner or admin can delete)"
+      }
+    },
+    {
+      "name": "Share File",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"share_type\": \"private\",\n    \"permission\": \"view\",\n    \"expires_in_days\": 7,\n    \"users\": [\"user@example.com\"]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/files/{{file_id}}/share/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "{{file_id}}", "share"]
+        },
+        "description": "Share a file with other users"
+      }
+    },
+    {
+      "name": "List My Files",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/my-files/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "my-files"]
+        },
+        "description": "Get list of files uploaded by current user"
+      }
+    },
+    {
+      "name": "Files Shared With Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/shared-with-me/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "shared-with-me"]
+        },
+        "description": "Get list of files shared with current user"
+      }
+    },
+    {
+      "name": "My Shares",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/my-shares/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "my-shares"]
+        },
+        "description": "Get list of files I have shared with others"
+      }
+    },
+    {
+      "name": "Download File",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/{{file_id}}/download/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "{{file_id}}", "download"]
+        },
+        "description": "Download a file (requires download permission)"
+      }
+    },
+    {
+      "name": "List All Shares (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/all-shares/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "all-shares"]
+        },
+        "description": "Get list of all file shares in the system (admin only)",
+        "response": [
+          {
+            "name": "Success Response",
+            "originalRequest": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{base_url}}/api/files/all-shares/"
+              }
+            },
+            "status": "OK",
+            "code": 200,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"total_shares\": 2,\n    \"shares\": [\n        {\n            \"share_id\": 1,\n            \"file_id\": 1,\n            \"filename\": \"document.pdf\",\n            \"shared_by\": {\n                \"id\": 1,\n                \"email\": \"user@example.com\"\n            },\n            \"created_at\": \"2024-03-20T10:00:00Z\",\n            \"expires_at\": \"2024-03-27T10:00:00Z\",\n            \"permission\": \"view\",\n            \"is_public\": false,\n            \"is_expired\": false,\n            \"shared_with\": {\n                \"id\": 2,\n                \"email\": \"recipient@example.com\"\n            }\n        },\n        {\n            \"share_id\": 2,\n            \"file_id\": 2,\n            \"filename\": \"public-doc.pdf\",\n            \"shared_by\": {\n                \"id\": 1,\n                \"email\": \"user@example.com\"\n            },\n            \"created_at\": \"2024-03-20T11:00:00Z\",\n            \"expires_at\": \"2024-03-27T11:00:00Z\",\n            \"permission\": \"download\",\n            \"is_public\": true,\n            \"is_expired\": false\n        }\n    ]\n}"
+            }
+          },
+          {
+            "name": "Error Response (Unauthorized)",
+            "originalRequest": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{base_url}}/api/files/all-shares/"
+              }
+            },
+            "status": "Forbidden",
+            "code": 403,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"detail\": \"You do not have permission to perform this action.\"\n}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Delete Share",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/files/{{share_id}}/delete-share/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "files", "{{share_id}}", "delete-share"]
+        },
+        "description": "Delete a file share (admin can delete any, users can delete their own)"
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/1/delete-share/"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"message\": \"Share deleted successfully\"\n}"
+          }
+        },
+        {
+          "name": "Error Response (Unauthorized)",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/1/delete-share/"
+            }
+          },
+          "status": "Forbidden",
+          "code": 403,
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"error\": \"You can only delete your own shares\"\n}"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token_here"
+    },
+    {
+      "key": "file_id",
+      "value": "1"
+    }
+  ]
+} 

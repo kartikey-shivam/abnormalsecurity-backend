@@ -205,11 +205,11 @@ SIMPLE_JWT = {
 
 # Email settings (for development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Print emails to console
-EMAIL_HOST = 'kartikey.saraswat301@gmail.com'  # For production
+EMAIL_HOST = ''  # For production
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kartikey.saraswat301@gmail.com'  # For production
-EMAIL_HOST_PASSWORD = 'jlhp uwsg iqtq irbb'  # For production
+EMAIL_HOST_USER = ''  # For production
+EMAIL_HOST_PASSWORD = ''  # For production
 
 LOGGING = {
     'version': 1,
